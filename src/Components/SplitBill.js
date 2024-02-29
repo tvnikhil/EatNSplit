@@ -6,21 +6,30 @@ export default function SplitBill({ id, data, setData, onIsSplit }) {
   const [myExpense, setMyExpense] = useState("");
   const [othersExpense, setOthersExpense] = useState("");
   const [billChoice, setBillChoice] = useState("You");
+
   function handleMyexp(e) {
     if (Number(e.target.value) <= billVal) {
       setMyExpense((ex) => (ex = e.target.value));
-      setOthersExpense(
-        (ex) => (ex = String(Number(billVal) - Number(e.target.value)))
-      );
+      if (e.target.value === "") {
+        setOthersExpense((ex) => (ex = ""));
+      } else {
+        setOthersExpense(
+          (ex) => (ex = String(Number(billVal) - Number(e.target.value)))
+        );
+      }
     }
   }
 
   function handleOtherexp(e) {
     if (Number(e.target.value) <= billVal) {
       setOthersExpense((ex) => (ex = e.target.value));
-      setMyExpense(
-        (ex) => (ex = String(Number(billVal) - Number(e.target.value)))
-      );
+      if (e.target.value === "") {
+        setMyExpense((ex) => (ex = ""));
+      } else {
+        setMyExpense(
+          (ex) => (ex = String(Number(billVal) - Number(e.target.value)))
+        );
+      }
     }
   }
 
@@ -46,6 +55,12 @@ export default function SplitBill({ id, data, setData, onIsSplit }) {
     onIsSplit(id);
   }
 
+  function preventMinus(e) {
+    if (e.code === "Minus") {
+      e.preventDefault();
+    }
+  }
+
   let name = "",
     i = 0;
   for (i = 0; i < data.length; i++) {
@@ -60,8 +75,10 @@ export default function SplitBill({ id, data, setData, onIsSplit }) {
       <label>💰Bill value</label>
       <input
         placeholder=""
+        type="Number"
         value={billVal}
         onChange={(e) => setBillVal(e.target.value)}
+        onKeyDown={(e) => preventMinus(e)}
       ></input>
       <label>💵Your Expense</label>
       <input
@@ -69,6 +86,7 @@ export default function SplitBill({ id, data, setData, onIsSplit }) {
         type="Number"
         placeholder=""
         value={myExpense}
+        onKeyDown={(e) => preventMinus(e)}
         onChange={(e) => handleMyexp(e)}
       ></input>
       <label>💵{name}'s Expense</label>
@@ -77,6 +95,7 @@ export default function SplitBill({ id, data, setData, onIsSplit }) {
         type="Number"
         placeholder=""
         value={othersExpense}
+        onKeyDown={(e) => preventMinus(e)}
         onChange={(e) => handleOtherexp(e)}
       ></input>
       <label>🤑Who's paying the bill?</label>
